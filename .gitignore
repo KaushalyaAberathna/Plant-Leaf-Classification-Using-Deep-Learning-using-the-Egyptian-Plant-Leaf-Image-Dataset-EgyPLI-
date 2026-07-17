@@ -1,0 +1,39 @@
+# Dataset (large binary files -- not tracked; see README for download/setup instructions)
+dataset/
+archive*.zip
+*.zip
+
+# Trained models / checkpoints (large binary files)
+models/*.keras
+models/*.h5
+!models/.gitkeep
+
+# Generated outputs (regenerate via scripts; keep folder structure only)
+outputs/plots/*
+outputs/reports/*
+outputs/confusion_matrix/*
+outputs/predictions/*
+!outputs/plots/.gitkeep
+!outputs/reports/.gitkeep
+!outputs/confusion_matrix/.gitkeep
+!outputs/predictions/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
