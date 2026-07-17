@@ -6,12 +6,25 @@ plant leaf classifier.
 
 Pipeline stages (shared by train.py, evaluate.py and predict.py):
   1. Build a (filepath, label) table from the dataset folder.
-  2. Stratified train/val/test split (70/15/15), persisted to CSV so every
-     script -- and every re-run -- uses the *same* test set.
+  2. Group-aware, stratified train/val/test split (70/15/15), persisted to
+     CSV so every script -- and every re-run -- uses the *same* split.
   3. tf.data.Dataset that decodes each JPEG, resizes to 224x224 and scales
      pixels to [0, 1].
   4. A Keras augmentation block (rotation, flip, zoom, width/height shift,
      brightness) applied only to the training split.
+
+Note on burst-photo leakage
+----------------------------
+EgyPLI filenames encode a capture timestamp (IMG_YYYYMMDD_HHMMSS[_N].jpg).
+Inspecting them shows each physical leaf was photographed in a rapid burst
+(many frames 1-9 seconds apart -- same leaf, same background, slightly
+different angle) before moving to the next specimen. A naive random split
+scatters near-duplicate frames of the *same leaf* across train/val/test,
+letting the model partly memorize instances instead of learning the
+species -- inflating validation/test accuracy in a way that will not hold
+up on genuinely new photos. build_dataframe() clusters images into photo
+"sessions" per class (gap > 10s starts a new session) and
+group_stratified_split() keeps every session entirely within one split.
 
 Note on EfficientNet-B0 and [0,1] normalization
 ------------------------------------------------
@@ -29,13 +42,15 @@ model-specific adapter the same way.
 """
 
 import os
+import random
+import re
 import sys
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 from PIL import Image
-from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -53,12 +68,53 @@ SPLITS_DIR = os.path.join(REPORTS_DIR, "splits")
 TRAIN_RATIO, VAL_RATIO, TEST_RATIO = 0.70, 0.15, 0.15
 DEFAULT_BATCH_SIZE = 32
 
+FILENAME_TIMESTAMP_RE = re.compile(r"IMG_(\d{8})_(\d{6})")
+SESSION_GAP_SECONDS = 10  # frames closer together than this = same burst/session
+
 
 # ---------------------------------------------------------------------------
 # 1. File table + stratified split
 # ---------------------------------------------------------------------------
+def _extract_timestamp(filename: str):
+    """Parse the capture timestamp out of an EgyPLI filename, or None if it
+    doesn't match the IMG_YYYYMMDD_HHMMSS[_N].jpg convention.
+    """
+    m = FILENAME_TIMESTAMP_RE.match(filename)
+    if not m:
+        return None
+    return datetime.strptime(m.group(1) + m.group(2), "%Y%m%d%H%M%S")
+
+
+def _assign_session_ids(df: pd.DataFrame, gap_seconds: int = SESSION_GAP_SECONDS) -> pd.DataFrame:
+    """Cluster images into photo 'sessions' per class using filename timestamps.
+
+    Consecutive frames within `gap_seconds` of each other are treated as
+    the same burst (same physical leaf); a gap larger than that starts a
+    new session. Files whose name doesn't match the timestamp pattern each
+    get their own singleton session, so they never accidentally merge with
+    a real burst. See the module docstring for why this matters.
+    """
+    df = df.copy()
+    timestamps = df["filepath"].apply(lambda p: _extract_timestamp(os.path.basename(p)))
+
+    session_ids = [None] * len(df)
+    for class_name, group_idx in df.groupby("label").groups.items():
+        ordered = timestamps.loc[group_idx].sort_values(na_position="first")
+        session_counter = 0
+        prev_ts = None
+        for idx, ts in ordered.items():
+            if ts is None or prev_ts is None or (ts - prev_ts).total_seconds() > gap_seconds:
+                session_counter += 1
+            session_ids[idx] = f"{class_name}_S{session_counter:03d}"
+            if ts is not None:
+                prev_ts = ts
+
+    df["session_id"] = session_ids
+    return df
+
+
 def build_dataframe(dataset_dir: str = DATASET_DIR) -> pd.DataFrame:
-    """Walk dataset_dir and return a DataFrame with filepath/label/label_idx.
+    """Walk dataset_dir and return a DataFrame with filepath/label/label_idx/session_id.
 
     label_idx uses the same sorted-class-name ordering as utils.get_class_names,
     so it matches classes.json exactly once that is saved in Step 4.
@@ -76,33 +132,74 @@ def build_dataframe(dataset_dir: str = DATASET_DIR) -> pd.DataFrame:
                     "label": class_name,
                     "label_idx": class_to_idx[class_name],
                 })
-    return pd.DataFrame(rows)
+    df = pd.DataFrame(rows)
+    return _assign_session_ids(df)
 
 
-def stratified_split(df: pd.DataFrame, train_ratio: float = TRAIN_RATIO,
-                      val_ratio: float = VAL_RATIO, test_ratio: float = TEST_RATIO,
-                      seed: int = SEED):
-    """Split df into train/val/test, preserving per-class proportions.
+def group_stratified_split(df: pd.DataFrame, train_ratio: float = TRAIN_RATIO,
+                            val_ratio: float = VAL_RATIO, test_ratio: float = TEST_RATIO,
+                            seed: int = SEED):
+    """Split df into train/val/test, keeping every photo session intact.
 
-    Stratifying matters here because EgyPLI is imbalanced (3.44x); a
-    non-stratified split could leave the smallest class (Tomato, 159
-    images) under-represented in the test set, making its precision/recall
-    unreliable in Step 6 evaluation.
+    Per class, sessions are assigned one at a time -- largest session first
+    -- to whichever split is currently furthest below its target share
+    ("largest remaining deficit first"). This keeps every split close to
+    the 70/15/15 target *and* guarantees every class gets representation
+    in all three splits, unlike a naive "fill train, then val, then test"
+    greedy fill, which starved test of whole classes when a class had few,
+    large sessions (see the leakage note in the module docstring for why
+    sessions can't just be split image-by-image in the first place).
     """
     assert abs(train_ratio + val_ratio + test_ratio - 1.0) < 1e-6, "ratios must sum to 1"
+    rng = random.Random(seed)
+    ratios = {"train": train_ratio, "val": val_ratio, "test": test_ratio}
 
-    train_df, temp_df = train_test_split(
-        df, test_size=(val_ratio + test_ratio), stratify=df["label"], random_state=seed
-    )
-    relative_test_size = test_ratio / (val_ratio + test_ratio)
-    val_df, test_df = train_test_split(
-        temp_df, test_size=relative_test_size, stratify=temp_df["label"], random_state=seed
-    )
-    return (
-        train_df.reset_index(drop=True),
-        val_df.reset_index(drop=True),
-        test_df.reset_index(drop=True),
-    )
+    train_rows, val_rows, test_rows = [], [], []
+    bucket_rows = {"train": train_rows, "val": val_rows, "test": test_rows}
+
+    for _, class_df in df.groupby("label"):
+        session_sizes = class_df.groupby("session_id").size().to_dict()
+        sessions = list(session_sizes.items())
+        rng.shuffle(sessions)  # break ties between equal-size sessions randomly
+        sessions.sort(key=lambda item: item[1], reverse=True)  # largest first (LPT heuristic)
+
+        n_total = len(class_df)
+        targets = {name: ratio * n_total for name, ratio in ratios.items()}
+        current = {"train": 0, "val": 0, "test": 0}
+
+        assignment = {}
+        for session, size in sessions:
+            bucket = max(current, key=lambda name: targets[name] - current[name])
+            assignment[session] = bucket
+            current[bucket] += size
+
+        for _, row in class_df.iterrows():
+            bucket_rows[assignment[row["session_id"]]].append(row)
+
+    train_df = pd.DataFrame(train_rows).reset_index(drop=True)
+    val_df = pd.DataFrame(val_rows).reset_index(drop=True)
+    test_df = pd.DataFrame(test_rows).reset_index(drop=True)
+    return train_df, val_df, test_df
+
+
+def verify_no_session_leakage(train_df: pd.DataFrame, val_df: pd.DataFrame, test_df: pd.DataFrame) -> None:
+    """Raise if any photo session appears in more than one split.
+
+    An automated guard against the exact leakage bug group_stratified_split
+    exists to fix -- run this after every split (see __main__ below).
+    """
+    train_sessions = set(train_df["session_id"])
+    val_sessions = set(val_df["session_id"])
+    test_sessions = set(test_df["session_id"])
+
+    overlaps = {
+        "train/val": train_sessions & val_sessions,
+        "train/test": train_sessions & test_sessions,
+        "val/test": val_sessions & test_sessions,
+    }
+    leaking = {k: v for k, v in overlaps.items() if v}
+    if leaking:
+        raise AssertionError(f"Session leakage detected between splits: {leaking}")
 
 
 def save_splits(train_df, val_df, test_df, splits_dir: str = SPLITS_DIR) -> None:
@@ -133,7 +230,8 @@ def get_or_create_splits(dataset_dir: str = DATASET_DIR, splits_dir: str = SPLIT
             return existing
 
     df = build_dataframe(dataset_dir)
-    train_df, val_df, test_df = stratified_split(df)
+    train_df, val_df, test_df = group_stratified_split(df)
+    verify_no_session_leakage(train_df, val_df, test_df)
     save_splits(train_df, val_df, test_df, splits_dir)
     return train_df, val_df, test_df
 
@@ -243,9 +341,13 @@ if __name__ == "__main__":
 
     ensure_output_dirs()
 
-    print("Building stratified train/val/test split...")
+    print("Building group-aware, stratified train/val/test split...")
     train_df, val_df, test_df = get_or_create_splits(force_new=True)
-    print(f"  train: {len(train_df)}  val: {len(val_df)}  test: {len(test_df)}")
+    print(f"  train: {len(train_df)} images / {train_df['session_id'].nunique()} sessions")
+    print(f"  val:   {len(val_df)} images / {val_df['session_id'].nunique()} sessions")
+    print(f"  test:  {len(test_df)} images / {test_df['session_id'].nunique()} sessions")
+    verify_no_session_leakage(train_df, val_df, test_df)
+    print("  Leakage check passed: no photo session appears in more than one split.")
     print(f"  saved -> {SPLITS_DIR}")
 
     class_names = get_class_names()
