@@ -3,20 +3,10 @@ dataset/
 archive*.zip
 *.zip
 
-# Trained models / checkpoints (large binary files)
-models/*.keras
-models/*.h5
-!models/.gitkeep
-
-# Generated outputs (regenerate via scripts; keep folder structure only)
-outputs/plots/*
-outputs/reports/*
-outputs/confusion_matrix/*
-outputs/predictions/*
-!outputs/plots/.gitkeep
-!outputs/reports/.gitkeep
-!outputs/confusion_matrix/.gitkeep
-!outputs/predictions/.gitkeep
+# Trained model and generated outputs (plots, reports, confusion matrix,
+# predictions) ARE tracked -- they're the graded deliverables (Step 10) and
+# are required for evaluators to run predict.py/app.py without retraining.
+# Only large raw input data below stays excluded.
 
 # Python
 __pycache__/

@@ -1,0 +1,19 @@
+EfficientNet-B0 -- Test Set Classification Report
+Test images: 535
+============================================================
+Accuracy: 0.9439
+
+              precision    recall  f1-score   support
+
+       Apple     1.0000    0.7895    0.8824        76
+       Berry     0.7115    0.8222    0.7629        45
+         Fig     0.9620    1.0000    0.9806        76
+       Guava     1.0000    1.0000    1.0000        78
+      Orange     0.9444    1.0000    0.9714        85
+        Palm     1.0000    0.9130    0.9545        69
+   Persimmon     0.9222    1.0000    0.9595        83
+      Tomato     1.0000    1.0000    1.0000        23
+
+    accuracy                         0.9439       535
+   macro avg     0.9425    0.9406    0.9389       535
+weighted avg     0.9494    0.9439    0.9439       535

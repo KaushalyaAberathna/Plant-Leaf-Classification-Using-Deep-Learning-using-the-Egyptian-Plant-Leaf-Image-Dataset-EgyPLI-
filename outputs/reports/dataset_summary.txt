@@ -1,0 +1,17 @@
+EgyPLI DATASET SUMMARY
+=======================================================
+Number of classes : 8
+Class names       : Apple, Berry, Fig, Guava, Orange, Palm, Persimmon, Tomato
+Total images      : 3588
+-------------------------------------------------------
+Class              Images     Share
+Orange                547     15.2%
+Persimmon             527     14.7%
+Guava                 520     14.5%
+Apple                 519     14.5%
+Fig                   508     14.2%
+Palm                  468     13.0%
+Berry                 340      9.5%
+Tomato                159      4.4%
+-------------------------------------------------------
+Max/min class imbalance ratio: 3.44x

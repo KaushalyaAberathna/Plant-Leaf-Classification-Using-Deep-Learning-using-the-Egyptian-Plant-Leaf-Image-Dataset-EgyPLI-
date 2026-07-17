@@ -1,0 +1,61 @@
+{
+  "model": "EfficientNet-B0",
+  "test_images": 535,
+  "accuracy": 0.9439252336448598,
+  "macro_precision": 0.9425288055826031,
+  "macro_recall": 0.9405924230867022,
+  "macro_f1": 0.9389245373291624,
+  "weighted_precision": 0.9494493028824037,
+  "weighted_recall": 0.9439252336448598,
+  "weighted_f1": 0.9439148338819954,
+  "per_class": {
+    "Apple": {
+      "precision": 1.0,
+      "recall": 0.7894736842105263,
+      "f1_score": 0.8823529411764706,
+      "support": 76.0
+    },
+    "Berry": {
+      "precision": 0.7115384615384616,
+      "recall": 0.8222222222222222,
+      "f1_score": 0.7628865979381443,
+      "support": 45.0
+    },
+    "Fig": {
+      "precision": 0.9620253164556962,
+      "recall": 1.0,
+      "f1_score": 0.9806451612903225,
+      "support": 76.0
+    },
+    "Guava": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "support": 78.0
+    },
+    "Orange": {
+      "precision": 0.9444444444444444,
+      "recall": 1.0,
+      "f1_score": 0.9714285714285714,
+      "support": 85.0
+    },
+    "Palm": {
+      "precision": 1.0,
+      "recall": 0.9130434782608695,
+      "f1_score": 0.9545454545454546,
+      "support": 69.0
+    },
+    "Persimmon": {
+      "precision": 0.9222222222222223,
+      "recall": 1.0,
+      "f1_score": 0.9595375722543352,
+      "support": 83.0
+    },
+    "Tomato": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "support": 23.0
+    }
+  }
+}

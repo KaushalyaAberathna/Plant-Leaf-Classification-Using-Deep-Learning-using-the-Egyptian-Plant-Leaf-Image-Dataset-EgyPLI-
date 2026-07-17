@@ -1,0 +1,15 @@
+{
+  "phase": "initial_frozen_backbone",
+  "epochs_requested": 20,
+  "epochs_run": 12,
+  "batch_size": 32,
+  "learning_rate": 0.001,
+  "dropout_rate": 0.3,
+  "dense_units": 256,
+  "class_weight_used": true,
+  "best_epoch": 10,
+  "best_val_accuracy": 0.9168173670768738,
+  "best_val_loss": 0.3138499855995178,
+  "training_time_minutes": 13.68,
+  "model_saved_to": "E:\\Semester 8\\EC8020\\Task 4\\Project\\models\\efficientnetb0_best.keras"
+}

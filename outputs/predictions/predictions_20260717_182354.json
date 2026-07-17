@@ -1,0 +1,102 @@
+[
+  {
+    "image": "dataset/Apple/IMG_20240710_162436.jpg",
+    "predicted_class": "Berry",
+    "confidence_percent": 90.98,
+    "top_predictions": [
+      {
+        "class": "Berry",
+        "confidence_percent": 90.98
+      },
+      {
+        "class": "Apple",
+        "confidence_percent": 8.6
+      },
+      {
+        "class": "Palm",
+        "confidence_percent": 0.32
+      }
+    ],
+    "prediction_time_seconds": 0.0841
+  },
+  {
+    "image": "dataset/Berry/IMG_20240702_163531.jpg",
+    "predicted_class": "Berry",
+    "confidence_percent": 99.23,
+    "top_predictions": [
+      {
+        "class": "Berry",
+        "confidence_percent": 99.23
+      },
+      {
+        "class": "Fig",
+        "confidence_percent": 0.77
+      },
+      {
+        "class": "Persimmon",
+        "confidence_percent": 0.0
+      }
+    ],
+    "prediction_time_seconds": 0.0822
+  },
+  {
+    "image": "dataset/Guava/IMG_20240710_172856.jpg",
+    "predicted_class": "Guava",
+    "confidence_percent": 100.0,
+    "top_predictions": [
+      {
+        "class": "Guava",
+        "confidence_percent": 100.0
+      },
+      {
+        "class": "Orange",
+        "confidence_percent": 0.0
+      },
+      {
+        "class": "Persimmon",
+        "confidence_percent": 0.0
+      }
+    ],
+    "prediction_time_seconds": 0.0848
+  },
+  {
+    "image": "dataset/Tomato/IMG_20240702_162444.jpg",
+    "predicted_class": "Tomato",
+    "confidence_percent": 100.0,
+    "top_predictions": [
+      {
+        "class": "Tomato",
+        "confidence_percent": 100.0
+      },
+      {
+        "class": "Berry",
+        "confidence_percent": 0.0
+      },
+      {
+        "class": "Fig",
+        "confidence_percent": 0.0
+      }
+    ],
+    "prediction_time_seconds": 0.0833
+  },
+  {
+    "image": "dataset/Orange/IMG_20240813_124620_2.jpg",
+    "predicted_class": "Orange",
+    "confidence_percent": 100.0,
+    "top_predictions": [
+      {
+        "class": "Orange",
+        "confidence_percent": 100.0
+      },
+      {
+        "class": "Persimmon",
+        "confidence_percent": 0.0
+      },
+      {
+        "class": "Guava",
+        "confidence_percent": 0.0
+      }
+    ],
+    "prediction_time_seconds": 0.0725
+  }
+]
