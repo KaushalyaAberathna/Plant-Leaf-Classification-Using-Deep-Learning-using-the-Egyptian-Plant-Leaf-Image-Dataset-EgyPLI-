@@ -41,6 +41,14 @@ DEFAULT_DROPOUT = 0.30
 DEFAULT_DENSE_UNITS = 256
 DEFAULT_LEARNING_RATE = 1e-3
 
+# Names of the custom classification head layers added in build_model(), used
+# by train.py's fine-tuning phase to tell backbone layers apart from head
+# layers after reloading a saved model from disk (where base_model is no
+# longer a separate nested object -- see efficientnet_model.py's build_model
+# input_tensor usage, which inlines EfficientNetB0's layers into the outer
+# functional graph).
+HEAD_LAYER_NAMES = {"gap", "head_bn", "head_dropout", "head_dense", "predictions"}
+
 
 def build_model(num_classes: int, img_size=IMG_SIZE, dropout_rate: float = DEFAULT_DROPOUT,
                  dense_units: int = DEFAULT_DENSE_UNITS, learning_rate: float = DEFAULT_LEARNING_RATE,
