@@ -158,35 +158,3 @@ def plot_sample_images(dataset_dir: str = DATASET_DIR, samples_per_class: int = 
     return fig
 
 
-def plot_training_curves(history: dict, save_dir: str = PLOTS_DIR):
-    """Save accuracy.png and loss.png from a Keras History.history dict.
-
-    Kept separate from plot_finetune_comparison below: this is the plain
-    single-run view required by Step 7, always overwritten with the
-    latest (fine-tuned) run so accuracy.png/loss.png reflect the final model.
-    """
-    os.makedirs(save_dir, exist_ok=True)
-
-    # Accuracy
-    plt.figure(figsize=(8, 5))
-    plt.plot(history["accuracy"], label="Train Accuracy")
-    plt.plot(history["val_accuracy"], label="Validation Accuracy")
-    plt.xlabel("Epoch")
-    plt.ylabel("Accuracy")
-    plt.title("Training vs Validation Accuracy")
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(os.path.join(save_dir, "accuracy.png"), dpi=150)
-    plt.close()
-
-    # Loss
-    plt.figure(figsize=(8, 5))
-    plt.plot(history["loss"], label="Train Loss")
-    plt.plot(history["val_loss"], label="Validation Loss")
-    plt.xlabel("Epoch")
-    plt.ylabel("Loss")
-    plt.title("Training vs Validation Loss")
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(os.path.join(save_dir, "loss.png"), dpi=150)
-    plt.close()
