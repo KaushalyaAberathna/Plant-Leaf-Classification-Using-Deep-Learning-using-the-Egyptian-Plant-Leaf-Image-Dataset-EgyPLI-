@@ -1,0 +1,62 @@
+[
+  {
+    "image": "dataset\\Apple\\IMG_20240710_161156_1.jpg",
+    "predicted_class": "Apple",
+    "confidence_percent": 99.53,
+    "top_predictions": [
+      {
+        "class": "Apple",
+        "confidence_percent": 99.53
+      },
+      {
+        "class": "Berry",
+        "confidence_percent": 0.36
+      },
+      {
+        "class": "Persimmon",
+        "confidence_percent": 0.09
+      }
+    ],
+    "prediction_time_seconds": 0.142
+  },
+  {
+    "image": "dataset\\Apple\\IMG_20240710_161203.jpg",
+    "predicted_class": "Apple",
+    "confidence_percent": 99.99,
+    "top_predictions": [
+      {
+        "class": "Apple",
+        "confidence_percent": 99.99
+      },
+      {
+        "class": "Berry",
+        "confidence_percent": 0.01
+      },
+      {
+        "class": "Fig",
+        "confidence_percent": 0.0
+      }
+    ],
+    "prediction_time_seconds": 0.1216
+  },
+  {
+    "image": "dataset\\Tomato\\IMG_20240702_161820.jpg",
+    "predicted_class": "Tomato",
+    "confidence_percent": 99.99,
+    "top_predictions": [
+      {
+        "class": "Tomato",
+        "confidence_percent": 99.99
+      },
+      {
+        "class": "Berry",
+        "confidence_percent": 0.01
+      },
+      {
+        "class": "Apple",
+        "confidence_percent": 0.0
+      }
+    ],
+    "prediction_time_seconds": 0.1152
+  }
+]

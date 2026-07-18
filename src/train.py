@@ -158,7 +158,7 @@ def train_initial(epochs: int = DEFAULT_EPOCHS, batch_size: int = DEFAULT_BATCH_
         json.dump(config, f, indent=2)
 
     print(f"\nInitial training complete in {elapsed_minutes:.1f} min")
-    print(f"Best epoch: {best_epoch}  val_accuracy={config['best_val_accuracy']:.4f}  val_loss={config['best_val_loss']:.4f}")
+    print(f"Best epoch: {config['best_epoch']}  val_accuracy={config['best_val_accuracy']:.4f}  val_loss={config['best_val_loss']:.4f}")
     print(f"Model checkpoint -> {MODEL_PATH}")
     print(f"History -> {history_path}")
     print(f"Config  -> {config_path}")

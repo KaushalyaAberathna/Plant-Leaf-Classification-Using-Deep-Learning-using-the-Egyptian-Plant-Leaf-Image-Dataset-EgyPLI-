@@ -179,22 +179,31 @@ requirement and EfficientNet's actual numerical needs.
 
 | Phase | Best val_accuracy | val_loss |
 |---|---|---|
-| Initial (frozen backbone) | 91.68% | 0.314 |
-| Fine-tuned (top 30 layers unfrozen) | **92.41%** | 0.298 |
+| Initial (frozen backbone) | 91.68% | 0.223 |
+| Fine-tuned (top 30 layers unfrozen) | 91.68% (tied -- did not improve) | 0.223 |
+
+Fine-tuning did not beat the initial phase on this run, so the compare-and-select
+logic in `train.py` correctly kept the initial frozen-backbone model as the
+final one rather than overwriting it with a non-improving fine-tuned version.
+This is a legitimate, expected outcome for a small dataset -- not every
+fine-tuning attempt improves on the frozen baseline, and results vary run to
+run due to CPU floating-point nondeterminism and early-stopping timing.
 
 **Test set evaluation (535 held-out images, never seen during training):**
 
 | Metric | Score |
 |---|---|
-| Accuracy | **94.39%** |
-| Macro Precision / Recall / F1 | 0.9425 / 0.9406 / 0.9389 |
-| Weighted Precision / Recall / F1 | 0.9494 / 0.9439 / 0.9439 |
+| Accuracy | **93.83%** |
+| Macro Precision / Recall / F1 | 0.9425 / 0.9440 / 0.9379 |
+| Weighted Precision / Recall / F1 | 0.9462 / 0.9383 / 0.9371 |
 
-Per-class F1 ranges from 1.00 (Guava, Tomato) down to 0.76 (Berry). The
-confusion matrix (`outputs/confusion_matrix/confusion_matrix.png`) shows
-the main confusions are Apple->Berry (15 images) and Berry->Persimmon (6
-images) -- visually similar leaf shapes/colors -- plus a smaller
-Palm->Orange leak (5 images). Full breakdown in
+Per-class F1 ranges from 1.00 (Tomato) down to 0.86 (Apple). The confusion
+matrix (`outputs/confusion_matrix/confusion_matrix.png`) shows the model's
+main, reproducible weakness is confusing **Apple with Berry and Fig** (19 of
+76 Apple images misclassified) -- visually similar leaf shapes/colors -- plus
+a **Palm->Orange** confusion (10 of 69 Palm images). This pattern has shown
+up consistently across training runs, indicating a genuine feature-overlap
+issue rather than a one-off fluke. Full breakdown in
 `outputs/reports/classification_report.txt`.
 
 ## Future Improvements

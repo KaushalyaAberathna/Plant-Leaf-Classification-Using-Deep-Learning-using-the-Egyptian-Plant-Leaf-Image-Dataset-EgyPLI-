@@ -1,54 +1,54 @@
 {
   "model": "EfficientNet-B0",
   "test_images": 535,
-  "accuracy": 0.9439252336448598,
-  "macro_precision": 0.9425288055826031,
-  "macro_recall": 0.9405924230867022,
-  "macro_f1": 0.9389245373291624,
-  "weighted_precision": 0.9494493028824037,
-  "weighted_recall": 0.9439252336448598,
-  "weighted_f1": 0.9439148338819954,
+  "accuracy": 0.9383177570093458,
+  "macro_precision": 0.9424631285925429,
+  "macro_recall": 0.9439988213724464,
+  "macro_f1": 0.9379261254273469,
+  "weighted_precision": 0.9462251613180923,
+  "weighted_recall": 0.9383177570093458,
+  "weighted_f1": 0.9370826652558665,
   "per_class": {
     "Apple": {
       "precision": 1.0,
-      "recall": 0.7894736842105263,
-      "f1_score": 0.8823529411764706,
+      "recall": 0.75,
+      "f1_score": 0.8571428571428571,
       "support": 76.0
     },
     "Berry": {
-      "precision": 0.7115384615384616,
-      "recall": 0.8222222222222222,
-      "f1_score": 0.7628865979381443,
+      "precision": 0.7758620689655172,
+      "recall": 1.0,
+      "f1_score": 0.8737864077669902,
       "support": 45.0
     },
     "Fig": {
-      "precision": 0.9620253164556962,
+      "precision": 0.9156626506024096,
       "recall": 1.0,
-      "f1_score": 0.9806451612903225,
+      "f1_score": 0.9559748427672956,
       "support": 76.0
     },
     "Guava": {
-      "precision": 1.0,
+      "precision": 0.9873417721518988,
       "recall": 1.0,
-      "f1_score": 1.0,
+      "f1_score": 0.9936305732484076,
       "support": 78.0
     },
     "Orange": {
-      "precision": 0.9444444444444444,
+      "precision": 0.8947368421052632,
       "recall": 1.0,
-      "f1_score": 0.9714285714285714,
+      "f1_score": 0.9444444444444444,
       "support": 85.0
     },
     "Palm": {
-      "precision": 1.0,
-      "recall": 0.9130434782608695,
-      "f1_score": 0.9545454545454546,
+      "precision": 0.9661016949152542,
+      "recall": 0.8260869565217391,
+      "f1_score": 0.890625,
       "support": 69.0
     },
     "Persimmon": {
-      "precision": 0.9222222222222223,
-      "recall": 1.0,
-      "f1_score": 0.9595375722543352,
+      "precision": 1.0,
+      "recall": 0.9759036144578314,
+      "f1_score": 0.9878048780487805,
       "support": 83.0
     },
     "Tomato": {

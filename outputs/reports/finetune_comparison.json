@@ -1,18 +1,18 @@
 {
   "before_fine_tuning": {
     "val_accuracy": 0.9168173670768738,
-    "val_loss": 0.3138499855995178
+    "val_loss": 0.22299982607364655
   },
   "after_fine_tuning": {
-    "val_accuracy": 0.9240506291389465,
-    "val_loss": 0.29825878143310547,
-    "best_epoch": 2,
+    "val_accuracy": 0.9168173670768738,
+    "val_loss": 0.22268643975257874,
+    "best_epoch": 1,
     "epochs_run": 6,
     "unfrozen_layers": 30,
     "learning_rate": 1e-05
   },
-  "winner": "fine_tuned",
-  "improvement": 0.007233262062072754,
-  "training_time_minutes": 7.93,
+  "winner": "initial_frozen_backbone",
+  "improvement": 0.0,
+  "training_time_minutes": 8.59,
   "model_saved_to": "E:\\Semester 8\\EC8020\\Task 4\\Project\\models\\efficientnetb0_best.keras"
 }
